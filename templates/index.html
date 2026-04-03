@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONTROLLED EXECUTION SANDBOX // BLACK_OPS_EXECUTIVE</title>
+  <meta name="description" content="Pro-grade offensive/defensive Python execution forensics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ===== BLACK OPS EXECUTIVE THEME ===== */
+    :root {
+      --bg-void:       #020205;
+      --glass-bg:      rgba(10, 10, 15, 0.85);
+      --glass-border:  rgba(255, 0, 60, 0.4);
+      --rog-red:       #ff003c;
+      --neon-cyan:     #00fcfc;
+      --warning-gold:  #ffb800;
+      --high-risk-orange:#ff4d00;
+      --safe-green:    #08f7af;
+      --text-dim:      #6b747e;
+      --text-bright:   #f0f6fc;
+      --font-rog:      'Syncopate', sans-serif;
+      --font-ui:       'Rajdhani', sans-serif;
+      --font-code:     'Fira Code', monospace;
+      
+      /* Black Ops Aura */
+      --neon-glow:     0 0 30px rgba(255, 0, 60, 0.6);
+      --glass-blur:    blur(25px);
+    }
+
+    /* ===== BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-bright);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      /* Sharp Dark Grid */
+      background-image: 
+        linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 60px 32px;
+      width: 100%;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 0, 60, 0.4);
+    }
+    .header__brand {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header__logo { height: 60px; filter: drop-shadow(0 0 10px var(--rog-red)); border: 1px solid var(--rog-red); padding: 5px; }
+    .header__brand h1 {
+      font-family: var(--font-rog);
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #fff 0%, var(--rog-red) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .status-capsule {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header__status { font-family: var(--font-rog); font-size: 0.6rem; color: var(--rog-red); font-weight: 700; letter-spacing: 0.4em; }
+    .threat-level {
+      padding: 4px 12px;
+      background: rgba(255,0,60,0.1);
+      border: 1px solid var(--rog-red);
+      font-family: var(--font-rog);
+      font-size: 0.5rem;
+      color: var(--rog-red);
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(255,0,60,0.3);
+    }
+
+    /* ===== DASHBOARD STATS ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: ''; 
+      position: absolute; 
+      bottom: 0; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 80%; 
+      height: 2px;
+      /* Fading Gradient */
+      background: linear-gradient(90deg, transparent 0%, currentColor 50%, transparent 100%);
+      animation: neon-pulse 3s infinite ease-in-out;
+    }
+    
+    @keyframes neon-pulse {
+      0%, 100% { filter: drop-shadow(0 0 4px currentColor); opacity: 0.6; }
+      50% { filter: drop-shadow(0 0 12px currentColor); opacity: 1; }
+    }
+    .stat-card--safe { color: var(--safe-green); }
+    .stat-card--suspicious { color: var(--warning-gold); }
+    .stat-card--blocked { color: var(--rog-red); }
+    .stat-card--high { color: var(--high-risk-orange); }
+    
+    .stat-card--safe::after { background: linear-gradient(90deg, transparent 0%, var(--safe-green) 50%, transparent 100%); }
+    .stat-card--suspicious::after { background: linear-gradient(90deg, transparent 0%, var(--warning-gold) 50%, transparent 100%); }
+    .stat-card--blocked::after { background: linear-gradient(90deg, transparent 0%, var(--rog-red) 50%, transparent 100%); }
+    .stat-card--high::after { background: linear-gradient(90deg, transparent 0%, var(--high-risk-orange) 50%, transparent 100%); }
+    
+    .stat-label { font-family: var(--font-rog); font-size: 0.5rem; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 10px; display: block; }
+    .stat-value { font-family: var(--font-code); font-size: 1.8rem; font-weight: 700; color: #fff; }
+
+    /* ===== PRO HACKER GLASS COMPONENT ===== */
+    .exec-glass {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      border-radius: 4px;
+      padding: 40px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .exec-glass::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--rog-red);
+    }
+    .label-ops {
+      font-family: var(--font-rog);
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--rog-red);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: block;
+      letter-spacing: 4px;
+    }
+
+    /* ===== SOURCE EDITOR ===== */
+    .input-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 0, 60, 0.3);
+      padding: 20px;
+      border-radius: 2px;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-code);
+      font-size: 1.1rem;
+      outline: none;
+      resize: vertical;
+      line-height: 1.7;
+      text-shadow: 0 0 5px rgba(255,255,255,0.2);
+    }
+    
+    .btn-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .btn {
+      padding: 14px 40px;
+      background: rgba(255, 0, 60, 0.05);
+      border: 2px solid var(--rog-red);
+      color: var(--rog-red);
+      font-family: var(--font-rog);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 2px;
+    }
+    .btn:hover {
+      background: var(--rog-red);
+      color: #fff;
+      box-shadow: 0 0 30px var(--rog-red);
+      transform: translateY(-2px);
+    }
+    .btn--secondary { border-color: #333; color: #666; }
+    .btn--secondary:hover { border-color: #555; background: #111; box-shadow: none; }
+
+    /* ===== ANALYSIS FEED ===== */
+    #execution-node {
+      margin-top: 30px;
+      padding: 25px;
+      background: rgba(0, 242, 255, 0.03);
+      border-left: 4px solid var(--neon-cyan);
+      display: none;
+    }
+    .log-text { font-family: var(--font-code); color: #fff; white-space: pre-wrap; font-size: 1rem; }
+
+    /* ===== INTEL FEED CENTRE ===== */
+    .intel-centre { padding: 0; }
+    .intel-header {
+      padding: 20px 40px;
+      background: rgba(255, 0, 60, 0.05);
+      border-bottom: 2px solid rgba(255, 0, 60, 0.2);
+      font-family: var(--font-rog);
+      font-size: 0.7rem;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+    
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      padding: 12px 40px;
+      background: rgba(0,0,0,0.4);
+      border-bottom: 1px solid #222;
+    }
+    .filter-btn {
+      padding: 6px 14px;
+      font-size: 0.55rem;
+      border: 1px solid #333;
+      background: transparent;
+      color: #777;
+      font-family: var(--font-rog);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { color: #fff; border-color: #666; }
+    .filter-btn.active { border-color: var(--rog-red); color: #fff; background: rgba(255, 0, 60, 0.15); }
+
+    .scroll-hub { max-height: 480px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      padding: 18px 40px;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-rog);
+      background: #000;
+      border-bottom: 1px solid #222;
+    }
+    td {
+      padding: 20px 40px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #111;
+      color: var(--text-dim);
+      transition: color 0.1s;
+    }
+    tr:hover td { background: rgba(255, 255, 255, 0.01); color: #fff; }
+
+    .risk-tag {
+      padding: 6px 12px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      border-radius: 2px;
+      text-transform: uppercase;
+      font-family: var(--font-rog);
+      border: 1px solid;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .risk--SAFE       { color: var(--safe-green); border-color: var(--safe-green); background: rgba(8, 247, 175, 0.05); }
+    .risk--BLOCKED    { color: var(--rog-red); border-color: var(--rog-red); background: rgba(255, 0, 60, 0.05); }
+    .risk--SUSPICIOUS { color: var(--warning-gold); border-color: var(--warning-gold); background: rgba(255, 184, 0, 0.05); }
+    .risk--HIGH_RISK  { color: var(--high-risk-orange); border-color: var(--high-risk-orange); background: rgba(255, 77, 0, 0.15); box-shadow: 0 0 15px rgba(255, 77, 0, 0.4); text-shadow: 0 0 5px var(--high-risk-orange); }
+
+    /* ===== INTERACTIVE SHINE MODAL ===== */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(30px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .blackops-modal {
+      background: rgba(10, 0, 5, 0.9);
+      border: 2px solid var(--rog-red);
+      box-shadow: var(--neon-glow);
+      width: 600px;
+      padding: 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    .blackops-modal::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -150%;
+      width: 50%; height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1), transparent);
+      transform: rotate(30deg);
+      transition: 0.6s;
+      pointer-events: none;
+    }
+    .blackops-modal:hover::before { left: 150%; }
+
+    .modal-title { font-family: var(--font-rog); font-size: 1.4rem; color: #fff; margin-bottom: 20px; text-shadow: 0 0 10px var(--rog-red); }
+    .modal-msg { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin-bottom: 30px; }
+    #threat-payload { display: block; margin-top: 20px; color: #fff; font-family: var(--font-code); background: #000; padding: 15px; border: 1px solid var(--rog-red); font-size: 0.9rem; word-break: break-all; }
+
+    /* UTILS */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--rog-red); }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(255, 0, 60, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(255, 0, 60, 0.6); }
+      100% { box-shadow: 0 0 20px rgba(255, 0, 60, 0.3); }
+    }
+    .pulse-glow { animation: pulse 3s infinite; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header__brand">
+      <img src="{{ url_for('static', filename='sandbox_logo.png') }}" class="header__logo" onerror="this.src='https://img.icons8.com/color/96/000000/cyber-security.png'">
+      <h1>CONTROLLED EXECUTION SANDBOX</h1>
+    </div>
+    <div class="status-capsule">
+      <div class="threat-level" id="posture-level">// POSTURE: NORMAL</div>
+      <div class="header__status">// FORENSIC_KERNEL_READY</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card stat-card--safe">
+      <span class="stat-label">🟢 CLEAN EXECUTIONS</span>
+      <div class="stat-value" id="stat-safe">0</div>
+    </div>
+    <div class="stat-card stat-card--suspicious">
+      <span class="stat-label">🟡 SUSPICIOUS ACTIVITY</span>
+      <div class="stat-value" id="stat-suspicious">0</div>
+    </div>
+    <div class="stat-card stat-card--blocked">
+      <span class="stat-label">🔴 SECURITY VIOLATIONS</span>
+      <div class="stat-value" id="stat-blocked">0</div>
+    </div>
+    <div class="stat-card stat-card--high">
+      <span class="stat-label">🔥 CRITICAL THREATS</span>
+      <div class="stat-value" id="stat-high">0</div>
+    </div>
+  </div>
+
+  <div class="exec-glass pulse-glow">
+    <span class="label-ops">Executive Malware Analysis Suite</span>
+    <div class="input-box">
+      <textarea id="cmd-input" placeholder="Enter Python expression for sandboxed execution..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="exec-btn" onclick="runAnalysis()">Initiate_Forensics</button>
+      <button class="btn btn--secondary" onclick="purgeBuffer()">Clear_History</button>
+      <button class="btn btn--secondary" onclick="exportLogs()" style="border-color: var(--neon-cyan); color: var(--neon-cyan);">Export_Audit_Logs</button>
+    </div>
+
+    <div id="execution-node">
+      <span class="label-ops" style="color:var(--neon-cyan)">STDOUT // SECURE_AUDIT_LOG</span>
+      <div class="log-text" id="log-target"></div>
+    </div>
+  </div>
+
+  <div class="exec-glass intel-centre">
+    <div class="intel-header">GLOBAL_THREAT_FEED</div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterLogs('ALL', this)">ALL_TRAFFIC</button>
+      <button class="filter-btn" onclick="filterLogs('SAFE', this)">🟢 SAFE</button>
+      <button class="filter-btn" onclick="filterLogs('SUSPICIOUS', this)">🟡 SUSPICIOUS</button>
+      <button class="filter-btn" onclick="filterLogs('BLOCKED', this)">🔴 BLOCKED</button>
+      <button class="filter-btn" onclick="filterLogs('HIGH_RISK', this)">🔥 HIGH_RISK</button>
+    </div>
+    <div class="scroll-hub">
+      <div id="chart-container" style="padding: 20px 40px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #111;">
+        <canvas id="threatChart" style="max-height: 150px;"></canvas>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th width="150">Timestamp</th>
+            <th width="500">Payload Forensic Summary</th>
+            <th width="180">Risk Level</th>
+            <th>Kernel Resolution</th>
+          </tr>
+        </thead>
+        <tbody id="intel-feed">
+          <!-- Forensics -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="intercept-overlay">
+  <div class="blackops-modal">
+    <div class="modal-title" id="modal-title">TERMINATION_ENFORCED</div>
+    <div class="modal-msg">
+      The Forensic Kernel has identified an offensive command structure. 
+      Sandbox isolation policy triggered an immediate termination.
+      <span id="threat-payload"></span>
+    </div>
+    <button class="btn" onclick="dismissModal()">Acknowledge_Termination</button>
+  </div>
+</div>
+
+<script>
+  const editor     = document.getElementById('cmd-input');
+  const execBtn    = document.getElementById('exec-btn');
+  const logNode    = document.getElementById('execution-node');
+  const logTarget  = document.getElementById('log-target');
+  const intelHub   = document.getElementById('intel-feed');
+  const modal      = document.getElementById('intercept-overlay');
+  const payloadRef = document.getElementById('threat-payload');
+  const modalTitle = document.getElementById('modal-title');
+
+  let currentFilter = 'ALL';
+  let cachedLogs    = [];
+  let threatChart   = null;
+
+  window.onload = () => {
+    refreshFeed();
+    setInterval(refreshFeed, 10000);
+  };
+
+  async function runAnalysis() {
+    const code = editor.value.trim();
+    if (!code) return;
+
+    execBtn.disabled = true;
+    execBtn.innerText = 'Analyzing...';
+
+    try {
+      const r = await fetch('/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ expression: code })
+      });
+      const data = await r.json();
+
+      if (data.classification !== 'SAFE') {
+        showMalwareAlert(data.classification, data.message);
+        logNode.style.display = 'none';
+      } else {
+        showCleanResult(data.message);
+      }
+      refreshFeed();
+    } catch (e) {
+      showCleanResult('SYSTEM_FAIL: ' + e.message);
+    } finally {
+      execBtn.disabled = false;
+      execBtn.innerText = 'Initiate_Forensics';
+    }
+  }
+
+  function showCleanResult(txt) {
+    logNode.style.display = 'block';
+    logTarget.innerText = txt;
+  }
+
+  function showMalwareAlert(level, msg) {
+    if (level === 'HIGH_RISK') {
+      modalTitle.innerText = '🔥 CRITICAL_THREAT_TERMINATED';
+      modalTitle.style.color = 'var(--high-risk-orange)';
+    } else if (level === 'BLOCKED') {
+      modalTitle.innerText = '🔴 SECURITY_VIOLATION';
+      modalTitle.style.color = 'var(--rog-red)';
+    } else {
+      modalTitle.innerText = '🟡 HEURISTIC_DETECTION';
+      modalTitle.style.color = 'var(--warning-gold)';
+    }
+    payloadRef.innerText = msg;
+    modal.style.display = 'flex';
+  }
+
+  function dismissModal() {
+    modal.style.display = 'none';
+  }
+
+  function purgeBuffer() {
+    editor.value = '';
+    logNode.style.display = 'none';
+  }
+
+  function filterLogs(level, btn) {
+    currentFilter = level;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFilteredLogs();
+  }
+
+  function initChart() {
+    const ctx = document.getElementById('threatChart').getContext('2d');
+    threatChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['SAFE', 'SUSPICIOUS', 'BLOCKED', 'HIGH_RISK'],
+        datasets: [{
+          label: 'Threat Frequency',
+          data: [0, 0, 0, 0],
+          backgroundColor: 'rgba(255, 0, 60, 0.1)',
+          borderColor: '#ff003c',
+          borderWidth: 2,
+          pointBackgroundColor: '#ff003c',
+          pointBorderColor: '#fff',
+          pointRadius: 4,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: '#111' }, ticks: { color: '#555', font: { family: 'Fira Code' } } },
+          y: { grid: { color: '#111' }, ticks: { color: '#555', stepSize: 1 } }
+        }
+      }
+    });
+  }
+
+  function updateChart(counts) {
+    if (!threatChart) initChart();
+    threatChart.data.datasets[0].data = [counts.SAFE, counts.SUSPICIOUS, counts.BLOCKED, counts.HIGH_RISK];
+    threatChart.update();
+  }
+
+  async function refreshFeed() {
+    try {
+      const r = await fetch('/logs');
+      cachedLogs = await r.json();
+      const counts = updateStats();
+      updateChart(counts);
+      renderFilteredLogs();
+    } catch(e) { console.error("Refresh fail:", e); }
+  }
+
+  function updateStats() {
+    const counts = { SAFE: 0, SUSPICIOUS: 0, BLOCKED: 0, HIGH_RISK: 0 };
+    cachedLogs.forEach(l => { if(counts[l.classification] !== undefined) counts[l.classification]++; });
+    document.getElementById('stat-safe').innerText = counts.SAFE;
+    document.getElementById('stat-suspicious').innerText = counts.SUSPICIOUS;
+    document.getElementById('stat-blocked').innerText = counts.BLOCKED;
+    document.getElementById('stat-high').innerText = counts.HIGH_RISK;
+    
+    // Update Global Posture Indicator
+    const posture = document.getElementById('posture-level');
+    if (counts.HIGH_RISK > 0) {
+      posture.innerText = '// POSTURE: CRITICAL';
+      posture.style.background = 'rgba(255, 77, 0, 0.2)';
+      posture.style.borderColor = 'var(--high-risk-orange)';
+      posture.style.color = 'var(--high-risk-orange)';
+    } else if (counts.BLOCKED > 0 || counts.SUSPICIOUS > 2) {
+      posture.innerText = '// POSTURE: ELEVATED';
+      posture.style.background = 'rgba(255, 184, 0, 0.1)';
+      posture.style.borderColor = 'var(--warning-gold)';
+      posture.style.color = 'var(--warning-gold)';
+    } else {
+      posture.innerText = '// POSTURE: NORMAL';
+      posture.style.background = 'rgba(8, 247, 175, 0.1)';
+      posture.style.borderColor = 'var(--safe-green)';
+      posture.style.color = 'var(--safe-green)';
+    }
+
+    return counts;
+  }
+
+  function exportLogs() {
+    const blob = new Blob([JSON.stringify(cachedLogs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `forensic_log_${new Date().getTime()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function renderFilteredLogs() {
+    intelHub.innerHTML = '';
+    const filtered = (currentFilter === 'ALL') ? cachedLogs : cachedLogs.filter(l => l.classification === currentFilter);
+    
+    [...filtered].reverse().forEach(log => {
+      const tr = document.createElement('tr');
+      const ts = new Date(log.timestamp).toLocaleTimeString();
+      const forensicSummary = log.input.length > 50 ? log.input.slice(0, 47) + '...' : log.input;
+      
+      const sigPreview = log.current_hash ? log.current_hash.slice(0, 8) + '...' : 'N/A';
+      
+      let badgeText = log.classification;
+      if (badgeText === 'SAFE') badgeText = '🟢 SAFE';
+      if (badgeText === 'SUSPICIOUS') badgeText = '🟡 SUSPICIOUS';
+      if (badgeText === 'BLOCKED') badgeText = '🔴 BLOCKED';
+      if (badgeText === 'HIGH_RISK') badgeText = '🔥 HIGH_RISK';
+      
+      tr.innerHTML = `
+        <td title="${log.timestamp}" style="color: #444; font-size: 0.65rem; font-family: 'Syncopate';">${ts}</td>
+        <td style="font-family: 'Fira Code'; font-size: 0.85rem; color: #ccc;">
+          ${esc(forensicSummary)}
+          <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px;">SIG: ${sigPreview}</div>
+        </td>
+        <td><span class="risk-tag risk--${log.classification}">${badgeText}</span></td>
+        <td style="color: #666; font-size: 0.75rem;">${esc(log.result || 'Neutral status.')}</td>
+      `;
+      intelHub.appendChild(tr);
+    });
+  }
+
+  function esc(t) {
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+  }
+
+  editor.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runAnalysis();
+  });
+  
+  // Auto-refresh feed every 10 seconds
+  setInterval(refreshFeed, 10000);
+</script>
+
+</body>
+</html>

